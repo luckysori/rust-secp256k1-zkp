@@ -178,10 +178,18 @@ int rustsecp256k1zkp_v0_4_0_ecdsa_adaptor_encrypt(const rustsecp256k1zkp_v0_4_0_
     }
 
     ret &= rustsecp256k1zkp_v0_4_0_pubkey_load(ctx, &enckey_ge, enckey);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
+
     ret &= rustsecp256k1zkp_v0_4_0_eckey_pubkey_serialize(&enckey_ge, buf33, &size, 1);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
+
     ret &= !!noncefp(nonce32, msg32, seckey32, buf33, ecdsa_adaptor_algo, sizeof(ecdsa_adaptor_algo), ndata);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
+
     rustsecp256k1zkp_v0_4_0_scalar_set_b32(&k, nonce32, NULL);
     ret &= !rustsecp256k1zkp_v0_4_0_scalar_is_zero(&k);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
+
     rustsecp256k1zkp_v0_4_0_scalar_cmov(&k, &rustsecp256k1zkp_v0_4_0_scalar_one, !ret);
 
     /* R' := k*G */
@@ -197,25 +205,33 @@ int rustsecp256k1zkp_v0_4_0_ecdsa_adaptor_encrypt(const rustsecp256k1zkp_v0_4_0_
 
     /* dleq_proof = DLEQ_prove(k, (R', Y, R)) */
     ret &= rustsecp256k1zkp_v0_4_0_dleq_prove(ctx, &dleq_proof_s, &dleq_proof_e, &k, &enckey_ge, &rp, &r, noncefp, ndata);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
 
     ret &= rustsecp256k1zkp_v0_4_0_scalar_set_b32_seckey(&sk, seckey32);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
+
     rustsecp256k1zkp_v0_4_0_scalar_cmov(&sk, &rustsecp256k1zkp_v0_4_0_scalar_one, !ret);
     rustsecp256k1zkp_v0_4_0_scalar_set_b32(&msg, msg32, NULL);
     rustsecp256k1zkp_v0_4_0_fe_normalize(&r.x);
     rustsecp256k1zkp_v0_4_0_fe_get_b32(buf33, &r.x);
     rustsecp256k1zkp_v0_4_0_scalar_set_b32(&sigr, buf33, NULL);
     ret &= !rustsecp256k1zkp_v0_4_0_scalar_is_zero(&sigr);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
+
     /* s' = k⁻¹(m + R.x * x) */
     rustsecp256k1zkp_v0_4_0_scalar_mul(&n, &sigr, &sk);
     rustsecp256k1zkp_v0_4_0_scalar_add(&n, &n, &msg);
     rustsecp256k1zkp_v0_4_0_scalar_inverse(&sp, &k);
     rustsecp256k1zkp_v0_4_0_scalar_mul(&sp, &sp, &n);
     ret &= !rustsecp256k1zkp_v0_4_0_scalar_is_zero(&sp);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
 
     /* return (R, R', s', dleq_proof) */
     ret &= rustsecp256k1zkp_v0_4_0_ecdsa_adaptor_sig_serialize(adaptor_sig162, &r, &rp, &sp, &dleq_proof_e, &dleq_proof_s);
+    if (!ret) { printf("line %d is zero\n", __LINE__); }
 
     rustsecp256k1zkp_v0_4_0_memczero(adaptor_sig162, 162, !ret);
+
     rustsecp256k1zkp_v0_4_0_scalar_clear(&n);
     rustsecp256k1zkp_v0_4_0_scalar_clear(&k);
     rustsecp256k1zkp_v0_4_0_scalar_clear(&sk);
